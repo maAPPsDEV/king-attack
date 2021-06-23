@@ -1,39 +1,40 @@
-# Solidity Game - [Game Title] Attack
+# Solidity Game - Game of Thrones
 
-_Inspired by OpenZeppelin's [Ethernaut](https://ethernaut.openzeppelin.com), [Game Title] Level_
+_Inspired by OpenZeppelin's [Ethernaut](https://ethernaut.openzeppelin.com), King Level_
 
 ⚠️Do not try on mainnet!
 
 ## Task
 
-Hacker the basic token contract below.
+The contract below represents a very simple game: whoever sends it an amount of ether that is larger than the current prize becomes the new king. On such an event, the overthrown king gets paid the new prize, making a bit of ether in the process! As ponzi as it gets 😁
+Such a fun game. Your goal is to become a permanent king.
 
-1. You are given 20 tokens to start with and you will beat the game if you somehow manage to get your hands on any additional tokens. Preferably a very large amount of tokens.
+1. Be a king.
+2. Make sure that nobody else can be a new king.
 
 _Hint:_
 
-1. What is an odometer?
+1. `transfer` always makes your contract vulnerable, it may take over the control fully to a malicious contract.
+2. `fallback` is powerful function at times not just for receiving money.
 
 ## What will you learn?
 
-1. Solidity Security Consideration
-2. **Underflow** and **Overflow** in use of unsigned integers
+1. `revert` will stop processing immediately, and reverts states.
+2. `fallback` function is used to receive ether.
 
 ## What is the most difficult challenge?
 
-**You won't get success to attack if the target contract has been complied in Solidity 0.8.0 or uppper** 🤔
+**How can you be a permanent king?** 🤔
 
-> [**Solidity v0.8.0 Breaking Changes**](https://docs.soliditylang.org/en/v0.8.5/080-breaking-changes.html?highlight=underflow#silent-changes-of-the-semantics)
->
-> Arithmetic operations revert on **underflow** and **overflow**. You can use `unchecked { ... }` to use the previous wrapping behaviour.
->
-> Checks for overflow are very common, so we made them the default to increase readability of code, even if it comes at a slight increase of gas costs.
+The only way to be staying on the throne forever is to destroy any attempts made by other competitions.
 
-I had tried to do everything in Solidity 0.8.5 at first time, but it didn't work, as it reverted transactions everytime it met underflow.
+Yes, you can be a king for the coming winter.
 
-Finally, I found that Solidity included those checks by defaults while using sliencely more gas.
+In order to prevent any other attempts, you can refuse the transactions that make them a new king.
 
-So, don't you need to use [`SafeMath`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol)?
+When a new king arrived, the contract returns your previous stake back to you. If you refuse to receive it? Nobody can be a new king once I got the throne. 🤴
+
+So, your only target is not to receive any ether.
 
 ## Source Code
 
@@ -41,25 +42,28 @@ So, don't you need to use [`SafeMath`](https://github.com/OpenZeppelin/openzeppe
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.5;
 
-contract Token {
-  mapping(address => uint256) balances;
-  uint256 public totalSupply;
+contract King {
+  address payable king;
+  uint256 public prize;
+  address payable public owner;
 
-  constructor(uint256 _initialSupply) public {
-    balances[msg.sender] = totalSupply = _initialSupply;
+  constructor() payable {
+    owner = payable(msg.sender);
+    king = payable(msg.sender);
+    prize = msg.value;
   }
 
-  function transfer(address _to, uint256 _value) public returns (bool) {
-    require(balances[msg.sender] - _value >= 0);
-    balances[msg.sender] -= _value;
-    balances[_to] += _value;
-    return true;
+  fallback() external payable {
+    require(msg.value >= prize || msg.sender == owner);
+    king.transfer(msg.value);
+    king = payable(msg.sender);
+    prize = msg.value;
   }
 
-  function balanceOf(address _owner) public view returns (uint256 balance) {
-    return balances[_owner];
+  function _king() public view returns (address payable) {
+    return king;
   }
 }
 
@@ -104,7 +108,7 @@ Compiling your contracts...
 
 
   Contract: Hacker
-    √ should steal countless of tokens (377ms)
+    √ should be a pemanent king (1336ms)
 
 
   1 passing (440ms)
