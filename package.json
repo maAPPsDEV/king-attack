@@ -1,5 +1,5 @@
 {
-  "name": "attack",
+  "name": "king-attack",
   "version": "1.0.0",
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0"
@@ -32,5 +32,5 @@
   ],
   "author": "tony@maapps.dev",
   "license": "MIT",
-  "description": "Solidity Game - Attack"
+  "description": "Solidity Game - King Attack"
 }

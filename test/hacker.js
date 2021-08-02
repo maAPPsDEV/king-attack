@@ -20,7 +20,7 @@ contract("Hacker", function ([_owner, _hacker, _competitor]) {
     expect(king).to.equal(hackerContract.address);
 
     // competitor attempt
-    await utils.shouldThrow(targetContract.send({ from: _competitor, value: web3.utils.toWei("2", "ether") }));
+    await utils.shouldThrow(targetContract.sendTransaction({ from: _competitor, value: web3.utils.toWei("2", "ether") }));
 
     // stay to be a king
     king = await targetContract._king();

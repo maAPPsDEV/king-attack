@@ -19,7 +19,7 @@ contract Hacker {
       pop(
         // discard result
         call(
-          1000000, // gas
+          gas(), // gas
           _target, // target address
           callvalue(), // wei sent together with the current call
           0, // input location
