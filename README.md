@@ -94,7 +94,7 @@ truffle develop
 test
 ```
 
-You should take ownership of the target contract successfully.
+You should see logs as following.
 
 ```
 truffle(develop)> test
